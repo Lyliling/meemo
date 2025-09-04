@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>메모장</title>
   <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
   <style>
     body {
       margin: 0;
-      font-family: monospace; /* 고정 폭 글꼴로 글자 간격 안정화 */
+      font-family: sans-serif;
       display: flex;
       flex-direction: column;
       height: 100vh;
@@ -17,17 +17,16 @@
     #editor {
       flex: 1;
       padding: 10px;
-      font-size: 16px;       /* 글자 크기 고정 */
-      line-height: 22px;     /* 줄 높이 고정 */
+      font-size: 16px;
       border: none;
       outline: none;
       width: 100%;
       box-sizing: border-box;
       background: transparent;
       color: inherit;
-      letter-spacing: 0;      /* 글자 간격 고정 */
-      word-spacing: 0.5ch;    /* 스페이스바 공백 폭: 글자 절반 정도 */
+      letter-spacing: -0.01px;
       white-space: pre-wrap;
+      word-spacing: 2px;
       overflow-y: auto;
     }
     #info {
@@ -43,7 +42,7 @@
       align-items: center;
       background: #ddd;
       padding: 5px;
-      gap: 3px;
+      gap: 3px; /* 버튼 사이 x축 간격 조정 */
     }
     button {
       flex: 1 1 auto;
@@ -95,15 +94,16 @@
       if (fontSize < 10) fontSize = 10;
       if (fontSize > 40) fontSize = 40;
       editor.style.fontSize = fontSize + "px";
-      editor.style.lineHeight = (fontSize + 6) + "px";
     }
 
     function decreaseSpacing() {
-      // 글자 간격과 공백은 스마트폰 기본에 맞춰 변경하지 않음
+      const current = parseFloat(editor.style.wordSpacing) || 0;
+      editor.style.wordSpacing = Math.max(0, current - 0.5) + "px";
     }
 
     function increaseSpacing() {
-      // 글자 간격과 공백은 스마트폰 기본에 맞춰 변경하지 않음
+      const current = parseFloat(editor.style.wordSpacing) || 0;
+      editor.style.wordSpacing = current + 0.5 + "px";
     }
 
     function saveMemo() {
