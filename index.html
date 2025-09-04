@@ -7,7 +7,7 @@
   <style>
     body {
       margin: 0;
-      font-family: monospace; /* 모바일에서도 글자 크기 안정화 */
+      font-family: monospace;
       display: flex;
       flex-direction: column;
       height: 100vh;
@@ -17,19 +17,18 @@
     #editor {
       flex: 1;
       padding: 10px;
-      font-size: 16px;       /* 글자 크기 고정(px) */
-      line-height: 22px;     /* 줄 높이 고정(px) */
+      font-size: 16px;
+      line-height: 22px;
       border: none;
       outline: none;
       width: 100%;
       box-sizing: border-box;
       background: transparent;
       color: inherit;
-      letter-spacing: -0.01px;
+      letter-spacing: -0.03em; /* 글자 간격 더 줄임 */
+      word-spacing: 1px;       /* 스페이스 간격 더 줄임 */
       white-space: pre-wrap;
-      word-spacing: 2px;
       overflow-y: auto;
-      resize: none;
     }
     #info {
       padding: 5px 10px;
@@ -62,7 +61,7 @@
   </style>
 </head>
 <body>
-  <textarea id="editor" placeholder="메모를 입력하세요..."></textarea>
+  <div id="editor" contenteditable="true" placeholder="메모를 입력하세요..."></div>
   <div id="info">글자 수: 0</div>
 
   <div id="buttons">
@@ -86,7 +85,7 @@
 
     editor.addEventListener("input", updateCount);
     function updateCount() {
-      let text = editor.value.replace(excludeRegex, "");
+      let text = editor.innerText.replace(excludeRegex, "");
       info.textContent = "글자 수: " + text.length;
     }
 
@@ -96,17 +95,21 @@
       if (fontSize < 10) fontSize = 10;
       if (fontSize > 40) fontSize = 40;
       editor.style.fontSize = fontSize + "px";
-      editor.style.lineHeight = (fontSize + 6) + "px"; // 줄 높이 글자 크기에 맞춤
+      editor.style.lineHeight = (fontSize + 6) + "px";
     }
 
     function decreaseSpacing() {
-      const current = parseFloat(editor.style.wordSpacing) || 2;
-      editor.style.wordSpacing = Math.max(0, current - 0.5) + "px";
+      const currentLetter = parseFloat(editor.style.letterSpacing) || -0.03;
+      const currentWord = parseFloat(editor.style.wordSpacing) || 1;
+      editor.style.letterSpacing = (currentLetter - 0.01) + "em";
+      editor.style.wordSpacing = Math.max(0, currentWord - 0.5) + "px";
     }
 
     function increaseSpacing() {
-      const current = parseFloat(editor.style.wordSpacing) || 2;
-      editor.style.wordSpacing = current + 0.5 + "px";
+      const currentLetter = parseFloat(editor.style.letterSpacing) || -0.03;
+      const currentWord = parseFloat(editor.style.wordSpacing) || 1;
+      editor.style.letterSpacing = (currentLetter + 0.01) + "em";
+      editor.style.wordSpacing = currentWord + 0.5 + "px";
     }
 
     function saveMemo() {
@@ -115,7 +118,7 @@
       if (!name) return;
       if (!name.toLowerCase().endsWith(".txt")) name += ".txt";
 
-      const blob = new Blob([editor.value], { type: "text/plain;charset=utf-8" });
+      const blob = new Blob([editor.innerText], { type: "text/plain;charset=utf-8" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
@@ -136,7 +139,7 @@
       if (!file) return;
       const reader = new FileReader();
       reader.onload = (evt) => {
-        editor.value = evt.target.result || "";
+        editor.innerText = evt.target.result || "";
         updateCount();
         alert("불러오기 완료!");
       };
