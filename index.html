@@ -25,8 +25,8 @@
       background: transparent;
       color: inherit;
       letter-spacing: -0.01px; /* 글자 간격 */
-      white-space: pre-wrap;     /* 공백과 줄바꿈 유지 */
-      word-spacing: 2px;         /* 스페이스바 공백을 조금 더 띄움 */
+      white-space: pre-wrap;    /* 공백과 줄바꿈 유지 */
+      word-spacing: 2px;        /* 초기 스페이스바 공백 */
       overflow-y: auto;
     }
     #info {
@@ -39,11 +39,12 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: space-around;
+      align-items: center;
       background: #ddd;
       padding: 5px;
     }
     button {
-      flex: 1 1 30%;
+      flex: 1 1 25%;
       margin: 5px;
       padding: 10px;
       border: none;
@@ -53,6 +54,10 @@
       background: #fff;
       box-shadow: 0 2px 4px rgba(0,0,0,0.2);
       color: #000;
+    }
+    #spacingSlider {
+      flex: 1 1 45%;
+      margin: 5px;
     }
   </style>
 </head>
@@ -66,6 +71,7 @@
     <button onclick="changeColor()">색상 변경</button>
     <button onclick="changeFontSize(1)">글자 크게</button>
     <button onclick="changeFontSize(-1)">글자 작게</button>
+    <input type="range" id="spacingSlider" min="0" max="10" step="0.1" value="2" title="공백 간격 조절">
   </div>
 
   <input type="file" id="fileInput" accept=".txt,text/plain" style="display:none">
@@ -74,6 +80,7 @@
     const editor = document.getElementById("editor");
     const info = document.getElementById("info");
     const fileInput = document.getElementById("fileInput");
+    const spacingSlider = document.getElementById("spacingSlider");
 
     const excludeRegex = /[\s\.\'\"\!\?\n\r\t]/g;
 
@@ -90,6 +97,10 @@
       if (fontSize > 40) fontSize = 40;
       editor.style.fontSize = fontSize + "px";
     }
+
+    spacingSlider.addEventListener("input", () => {
+      editor.style.wordSpacing = spacingSlider.value + "px";
+    });
 
     function saveMemo() {
       const defaultName = "memo.txt";
@@ -126,12 +137,7 @@
     });
 
     const colors = [
-      "#000000", // 흑
-      "#ffffff", // 백
-      "#ffd6e8", // 연분홍
-      "#c8facc", // 연녹
-      "#d6f0ff", // 연하늘
-      "#fff9c4"  // 연노랑
+      "#000000", "#ffffff", "#ffd6e8", "#c8facc", "#d6f0ff", "#fff9c4"
     ];
     const textColors = ["#ffffff", "#000000", "#000000", "#000000", "#000000", "#000000"];
     let colorIndex = -1;
