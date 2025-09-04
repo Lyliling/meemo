@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>메모장</title>
   <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+  
+  <!-- Google Fonts: Fira Mono -->
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Mono&display=swap" rel="stylesheet">
+  
   <style>
     body {
       margin: 0;
-      font-family: sans-serif;
+      font-family: 'Fira Mono', monospace; /* 이제 어디서든 동일 */
       display: flex;
       flex-direction: column;
       height: 100vh;
@@ -18,17 +22,17 @@
       flex: 1;
       padding: 10px;
       font-size: 16px;
+      line-height: 22px;
       border: none;
       outline: none;
       width: 100%;
       box-sizing: border-box;
       background: transparent;
       color: inherit;
-      letter-spacing: -0.01px;
+      letter-spacing: 0;      
+      word-spacing: 0.25em;  /* 스페이스바 공백 폭 스마트폰 기준 최적값 */
       white-space: pre-wrap;
-      word-spacing: 2px;
       overflow-y: auto;
-      line-height: 1.4; /* 줄 높이 고정 */
     }
     #info {
       padding: 5px 10px;
@@ -95,17 +99,11 @@
       if (fontSize < 10) fontSize = 10;
       if (fontSize > 40) fontSize = 40;
       editor.style.fontSize = fontSize + "px";
+      editor.style.lineHeight = (fontSize + 6) + "px";
     }
 
-    function decreaseSpacing() {
-      const current = parseFloat(editor.style.wordSpacing) || 0;
-      editor.style.wordSpacing = Math.max(0, current - 0.5) + "px";
-    }
-
-    function increaseSpacing() {
-      const current = parseFloat(editor.style.wordSpacing) || 0;
-      editor.style.wordSpacing = current + 0.5 + "px";
-    }
+    function decreaseSpacing() { }
+    function increaseSpacing() { }
 
     function saveMemo() {
       const defaultName = "memo.txt";
@@ -141,9 +139,7 @@
       reader.readAsText(file, "UTF-8");
     });
 
-    const colors = [
-      "#000000", "#ffffff", "#ffd6e8", "#c8facc", "#d6f0ff", "#fff9c4"
-    ];
+    const colors = ["#000000", "#ffffff", "#ffd6e8", "#c8facc", "#d6f0ff", "#fff9c4"];
     const textColors = ["#ffffff", "#000000", "#000000", "#000000", "#000000", "#000000"];
     let colorIndex = -1;
 
