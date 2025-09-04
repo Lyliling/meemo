@@ -17,7 +17,8 @@
     #editor {
       flex: 1;
       padding: 10px;
-      font-size: 16px;
+      font-size: 16px;       /* 글자 크기 고정(px) */
+      line-height: 22px;     /* 줄 높이 고정(px) */
       border: none;
       outline: none;
       width: 100%;
@@ -28,7 +29,7 @@
       white-space: pre-wrap;
       word-spacing: 2px;
       overflow-y: auto;
-      line-height: 1.4; /* 줄 높이 고정 */
+      font-family: monospace; /* 줄 높이 안정화를 위해 고정폭 사용 */
     }
     #info {
       padding: 5px 10px;
@@ -61,7 +62,7 @@
   </style>
 </head>
 <body>
-  <div id="editor" contenteditable="true" placeholder="메모를 입력하세요..."></div>
+  <textarea id="editor" placeholder="메모를 입력하세요..."></textarea>
   <div id="info">글자 수: 0</div>
 
   <div id="buttons">
@@ -85,7 +86,7 @@
 
     editor.addEventListener("input", updateCount);
     function updateCount() {
-      let text = editor.innerText.replace(excludeRegex, "");
+      let text = editor.value.replace(excludeRegex, "");
       info.textContent = "글자 수: " + text.length;
     }
 
@@ -95,15 +96,16 @@
       if (fontSize < 10) fontSize = 10;
       if (fontSize > 40) fontSize = 40;
       editor.style.fontSize = fontSize + "px";
+      editor.style.lineHeight = (fontSize + 6) + "px"; // 글자 크기에 맞춰 줄 높이 유지
     }
 
     function decreaseSpacing() {
-      const current = parseFloat(editor.style.wordSpacing) || 0;
+      const current = parseFloat(editor.style.wordSpacing) || 2;
       editor.style.wordSpacing = Math.max(0, current - 0.5) + "px";
     }
 
     function increaseSpacing() {
-      const current = parseFloat(editor.style.wordSpacing) || 0;
+      const current = parseFloat(editor.style.wordSpacing) || 2;
       editor.style.wordSpacing = current + 0.5 + "px";
     }
 
@@ -113,7 +115,7 @@
       if (!name) return;
       if (!name.toLowerCase().endsWith(".txt")) name += ".txt";
 
-      const blob = new Blob([editor.innerText], { type: "text/plain;charset=utf-8" });
+      const blob = new Blob([editor.value], { type: "text/plain;charset=utf-8" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
@@ -134,7 +136,7 @@
       if (!file) return;
       const reader = new FileReader();
       reader.onload = (evt) => {
-        editor.innerText = evt.target.result || "";
+        editor.value = evt.target.result || "";
         updateCount();
         alert("불러오기 완료!");
       };
