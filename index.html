@@ -25,8 +25,8 @@
       box-sizing: border-box;
       background: transparent;
       color: inherit;
-      letter-spacing: -0.03em; /* 글자 간격 더 줄임 */
-      word-spacing: 1px;       /* 스페이스 간격 더 줄임 */
+      letter-spacing: -0.03em; 
+      word-spacing: 1px;       
       white-space: pre-wrap;
       overflow-y: auto;
     }
@@ -84,6 +84,14 @@
     const excludeRegex = /[\s\.\'\"\!\?\n\r\t]/g;
 
     editor.addEventListener("input", updateCount);
+    editor.addEventListener("keydown", (e) => {
+      // 엔터, 마침표 입력 시 크기와 줄 높이 유지
+      const fontSizePx = fontSize + "px";
+      const lineHeightPx = (fontSize + 6) + "px";
+      editor.style.fontSize = fontSizePx;
+      editor.style.lineHeight = lineHeightPx;
+    });
+
     function updateCount() {
       let text = editor.innerText.replace(excludeRegex, "");
       info.textContent = "글자 수: " + text.length;
