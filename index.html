@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>심계천하 W2019 메모장</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background-color: #ffffff;
+      color: #000000;
+    }
+    #editor {
+      flex: 1;
+      padding: 10px;
+      font-size: 16px;
+      border: none;
+      outline: none;
+      width: 100%;
+      box-sizing: border-box;
+      background: transparent;
+      color: inherit;
+      letter-spacing: -0.01px; /* 글자 간격 조정 */
+      white-space: pre-wrap;     /* 공백과 줄바꿈 유지 */
+      word-spacing: -1px;        /* 스페이스바 입력 공백 간격 조정 */
+      overflow-y: auto;
+    }
+    #info {
+      padding: 5px 10px;
+      font-size: 14px;
+      text-align: right;
+      background: transparent;
+    }
+    #buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      background: #ddd;
+      padding: 5px;
+    }
+    button {
+      flex: 1 1 30%;
+      margin: 5px;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      background: #fff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+  <div id="editor" contenteditable="true" placeholder="메모를 입력하세요..."></div>
+  <div id="info">글자 수: 0</div>
+
+  <div id="buttons">
+    <button onclick="saveMemo()">저장</button>
+    <button onclick="openFilePicker()">불러오기</button>
+    <button onclick="changeColor()">색상 변경</button>
+    <button onclick="changeFontSize(1)">글자 크게</button>
+    <button onclick="changeFontSize(-1)">글자 작게</button>
+  </div>
+
+  <input type="file" id="fileInput" accept=".txt,text/plain" style="display:none">
+
+  <script>
+    const editor = document.getElementById("editor");
+    const info = document.getElementById("info");
+    const fileInput = document.getElementById("fileInput");
+
+    const excludeRegex = /[\s\.\'\"\!\?\n\r\t]/g;
+
+    editor.addEventListener("input", updateCount);
+    function updateCount() {
+      let text = editor.innerText.replace(excludeRegex, "");
+      info.textContent = "글자 수: " + text.length;
+    }
+
+    let fontSize = 16;
+    function changeFontSize(delta) {
+      fontSize += delta;
+      if (fontSize < 10) fontSize = 10;
+      if (fontSize > 40) fontSize = 40;
+      editor.style.fontSize = fontSize + "px";
+    }
+
+    function saveMemo() {
+      const defaultName = "memo.txt";
+      let name = prompt("저장할 파일 이름을 입력하세요 (.txt)", defaultName);
+      if (!name) return;
+      if (!name.toLowerCase().endsWith(".txt")) name += ".txt";
+
+      const blob = new Blob([editor.innerText], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      alert("저장 완료!");
+    }
+
+    function openFilePicker() {
+      fileInput.value = "";
+      fileInput.click();
+    }
+    fileInput.addEventListener("change", (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        editor.innerText = evt.target.result || "";
+        updateCount();
+        alert("불러오기 완료!");
+      };
+      reader.readAsText(file, "UTF-8");
+    });
+
+    const colors = [
+      "#000000", // 흑
+      "#ffffff", // 백
+      "#ffd6e8", // 연분홍
+      "#c8facc", // 연녹
+      "#d6f0ff", // 연하늘
+      "#fff9c4"  // 연노랑
+    ];
+    const textColors = ["#ffffff", "#000000", "#000000", "#000000", "#000000", "#000000"];
+    let colorIndex = -1;
+
+    function changeColor() {
+      colorIndex = (colorIndex + 1) % colors.length;
+      document.body.style.backgroundColor = colors[colorIndex];
+      document.body.style.color = textColors[colorIndex];
+    }
+
+    updateCount();
+  </script>
+</body>
+</html>
